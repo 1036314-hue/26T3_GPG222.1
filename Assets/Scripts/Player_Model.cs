@@ -25,7 +25,7 @@ public class Player_Model : NetworkBehaviour
 
 
     // Function that ONLY runs on the server. Typically for client controller code when they press buttons etc
-    [Rpc(SendTo.Server)]
+    [Rpc(target:SendTo.Server, InvokePermission = RpcInvokePermission.Owner, Delivery = RpcDelivery.Reliable)]
     private void GetBigOrDieTrying_RequestToServer_Rpc()
     {
         // This is running on the server. Check if it's legal/not cheating
@@ -34,7 +34,7 @@ public class Player_Model : NetworkBehaviour
 
 
     // Function that runs from the Server TO ALL clients
-    [Rpc(SendTo.ClientsAndHost)]
+    [Rpc(target:SendTo.ClientsAndHost, InvokePermission = RpcInvokePermission.Everyone, Delivery = RpcDelivery.Reliable)]
     private void GetBigOrDieTrying_ServerToClients_Rpc()
     {
         // This is bugged
