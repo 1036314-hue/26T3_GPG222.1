@@ -6,13 +6,14 @@ public class Torch_Model : NetworkBehaviour
 {
     public NetworkVariable<bool> isOn = new NetworkVariable<bool>();
 
-    public Light light;
+    
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
         OnValueChanged(false, isOn.Value);
+
     }
 
     private void OnEnable()
@@ -27,10 +28,7 @@ public class Torch_Model : NetworkBehaviour
 
     private void OnValueChanged(bool previousValue, bool newValue)
     {
-        if (newValue)
-            On_ClientView();
-        else
-            Off_ClientView();
+        EventManager.lightToggle?.Invoke(newValue);
     }
 
     public void On()
@@ -42,13 +40,5 @@ public class Torch_Model : NetworkBehaviour
     {
         isOn.Value = false;
     }
-    private void On_ClientView()
-    {
-        light.enabled = true;
-    }
-
-    private void Off_ClientView()
-    {
-        light.enabled = false;
-    }
+   
 }
