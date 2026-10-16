@@ -8,7 +8,6 @@ public class Player_Control : NetworkBehaviour
     [SerializeField]
     private Player_Model _model;
     private PlayerAction _action;
-    private Vector2 _moveInput;
 
     public override void OnNetworkSpawn()
     {
@@ -17,7 +16,7 @@ public class Player_Control : NetworkBehaviour
         base.OnNetworkSpawn();
         _action = new PlayerAction();
         _model = GetComponent<Player_Model>();
-        
+
         _action.Player.Move.performed += PlayerMovement;
         _action.Player.Move.canceled += PlayerMovement;
         _action.Player.Enable();
@@ -26,24 +25,25 @@ public class Player_Control : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-        base .OnNetworkDespawn();
+        base.OnNetworkDespawn();
         _action.Player.Disable();
         _action.Player.Move.canceled -= PlayerMovement;
         _action.Player.Move.performed -= PlayerMovement;
     }
 
-    private void PlayerMovement (InputAction.CallbackContext context)
+    private void PlayerMovement(InputAction.CallbackContext context)
     {
         if (!IsOwner) return;
-        _moveInput = context.ReadValue<Vector2>();
-        MovementRpc();
+        Vector2 _moveInput = context.ReadValue<Vector2>();
+        MovementRpc(_moveInput);
         Debug.Log("Player Movement Works");
     }
 
     [Rpc(SendTo.Server)]
-    private void MovementRpc ()
+    private void MovementRpc(Vector2 _moveInput)
     {
         _model.Movement(_moveInput);
         Debug.Log("Movement RPC Works");
     }
 }
+
