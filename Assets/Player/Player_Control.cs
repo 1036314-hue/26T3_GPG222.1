@@ -48,18 +48,6 @@ public class Player_Control : NetworkBehaviour
         Debug.Log("Movement RPC Works");
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.name == "Ball(Clone)")
-        {
-            NetworkObject networkBall = collision.transform.GetComponent<NetworkObject>();
-            if (BallSpawner.instance.ballList.Contains(collision.gameObject))
-            {
-                BallSpawner.instance.ballList.Remove(collision.gameObject);
-            }
-            networkBall.Despawn();
-
-        }
-    }
+    
 }
 
