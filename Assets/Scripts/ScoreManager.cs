@@ -20,12 +20,17 @@ public class ScoreManager : NetworkBehaviour
 
     public void ScoreUp(ulong playerId)
     {
-        if(playerId == 0)
+        
+        Debug.Log("Player ID = " + playerId);
+        if (!IsServer) return;
+        if (playerId == 0)
         {
+            Debug.Log("Player 1 score");
             player1Score.Value++;
         }
-      if(playerId == 1)
+        if(playerId == 1)
         {
+            Debug.Log("Player 2 score");
             player2Score.Value++;
         }
     }

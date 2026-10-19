@@ -12,24 +12,6 @@ public class Player_Model : NetworkBehaviour
     private Vector2 _movementValue;
 
 
-
-
-    public override void OnNetworkSpawn()
-    {
-        ScoreManager.instance.player1Score.OnValueChanged += UpdateScore1;
-        ScoreManager.instance.player2Score.OnValueChanged += UpdateScore2;
-    }
-
-    private void UpdateScore1(int previousValue, int newValue)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void UpdateScore2(int previousValue, int newValue)
-    {
-        throw new NotImplementedException();
-    }
-
     public void Movement(Vector2 _moveInput)
     {
         Debug.Log("Movement");
@@ -53,10 +35,16 @@ public class Player_Model : NetworkBehaviour
                 BallSpawner.instance.ballList.Remove(collision.gameObject);
             }
             networkBall.Despawn();
-            ulong playerId = NetworkManager.Singleton.LocalClientId;
-            ScoreManager.instance.ScoreUp(playerId);
+
+            ScoreUpdateRpc();
+
         }
     }
 
-
+    [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Reliable)]
+    private void ScoreUpdateRpc()
+    {
+        ulong playerId = NetworkManager.Singleton.LocalClientId;
+        ScoreManager.instance.ScoreUp(playerId);
+    }
 }
