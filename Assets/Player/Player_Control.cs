@@ -39,7 +39,9 @@ public class Player_Control : NetworkBehaviour
         Debug.Log("Player Movement Works");
     }
 
-    [Rpc(SendTo.Server)]
+    //Rpc sending to server so server handles the rest
+    //Unreliable as sent every frame
+    [Rpc(SendTo.Server, Delivery = RpcDelivery.Unreliable)]
     private void MovementRpc(Vector2 _moveInput)
     {
         _model.Movement(_moveInput);
