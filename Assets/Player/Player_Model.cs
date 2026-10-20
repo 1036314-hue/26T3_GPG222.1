@@ -2,6 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
+
 public class Player_Model : NetworkBehaviour
 {
     private Player_View _view;
@@ -10,7 +11,16 @@ public class Player_Model : NetworkBehaviour
     [SerializeField]
     private int _walkSpeed;
     private Vector2 _movementValue;
+    public event Action <ulong, int> ScoreChange;
+    public NetworkVariable<int> Score = new NetworkVariable<int>();
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();  
+        _view = GetComponent<Player_View>();
+        Score.OnValueChanged += OnScore;
+        ScoreChange?.Invoke(OwnerClientId, Score.Value);
+    }
 
     public void Movement(Vector2 _moveInput)
     {
@@ -41,10 +51,14 @@ public class Player_Model : NetworkBehaviour
         }
     }
 
-    [Rpc(SendTo.ClientsAndHost, Delivery = RpcDelivery.Reliable)]
+    private void OnScore(int previousValue, int newValue)
+    {
+        ScoreChange?.Invoke(OwnerClientId, Score.Value);
+    }
+
+    [Rpc(SendTo.Server, Delivery = RpcDelivery.Reliable)]
     private void ScoreUpdateRpc()
     {
-        ulong playerId = NetworkManager.Singleton.LocalClientId;
-        ScoreManager.instance.ScoreUp(playerId);
+        Score.Value++;
     }
 }
